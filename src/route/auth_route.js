@@ -4,12 +4,53 @@
 const express = require('express')
 
 const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-const router = express.Router()
+
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
+const prisma = new PrismaClient()
+const router = express.Router()
 const Joi = require('joi')
+
+router.post('/register',async(req,res) => {
+    const userSchema = Joi.object({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        email: Joi.string()
+            .email()
+            .required(),
+        social: Joi.object({
+            facebook: Joi.string().optional(),
+            twitter: Joi.string().optional(),
+            github: Joi.string().optional(),
+            website: Joi.string().optional(),
+        }).optional(),
+    })
+    const { error, value } = userSchema.validate(req.body)
+
+    if (error) {
+        return res.status(418).send({ "message": `there is some error : ${error}` })
+
+    } else {
+        const { firstName, lastName, email } = value
+
+        try {
+            const user = await prisma.user.create({
+                data: {
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                }
+            })
+            return res.status(200).json({ user })
+        } catch (error) {
+            return res.status(400).json({ "message": "the email is uniqe" })
+
+        }
+
+
+    }
+})
 
 router.post('/login',async(req,res)=> {
     const loginSchema = Joi.object({

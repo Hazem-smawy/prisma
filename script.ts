@@ -246,5 +246,3 @@ main()
     await prisma.$disconnect();
   });
 
-const hello: string = "hello";
-const hazem: string = "three four";
