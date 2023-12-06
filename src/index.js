@@ -30,7 +30,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use('/auth', require('./route/auth_route'))
-app.use('/users', require("./route/user_route.js"))
+app.use('/users', verifyToken,require("./route/user_route.js"))
 
 
 app.get('/',(req,res)=> {
