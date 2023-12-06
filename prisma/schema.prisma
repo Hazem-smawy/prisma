@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// model User {
+//   id               String          @id @default(uuid())
+//   age              Int
+//   name             String
+//   email            String          @unique
+//   role             Role            @default(BASIC)
+//   writtePosts      Post[]          @relation("WrittenPosts")
+//   favoritePosts    Post[]          @relation("favoritePosts")
+//   userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
+//   userPreferenceId String?         @unique
+// }
+
+// model UserPreference {
+//   id           String  @id @default(uuid())
+//   emailUpdates Boolean
+//   user         User?
+// }
+
+// model Post {
+//   id            String     @id @default(uuid())
+//   title         String
+//   averageRating Float
+//   createdAt     DateTime   @default(now())
+//   updatedAt     DateTime   @updatedAt
+//   auther        User       @relation("WrittenPosts", fields: [autherId], references: [id])
+//   autherId      String
+//   favoritedBy   User?      @relation("favoritePosts", fields: [favoritedById], references: [id])
+//   favoritedById String?
+//   categories    Category[]
+// }
+
+// model Category {
+//   id    String @id @default(uuid())
+//   name  String @unique
+//   posts Post[]
+// }
+
+// enum Role {
+//   BASIC
+//   EDITOR
+//   ADMIN
+// }
+
+model User {
+  id          Int                @id @default(autoincrement())
+  email       String             @unique
+  firstName   String?
+  lastName    String?
+  social      Json?
+  // Relation fields
+  courses     CourseEnrollment[]
+  testResults TestResult[]       @relation(name: "results")
+  testsGraded TestResult[]       @relation(name: "graded")
+  tokens      String?
+}
+
+model Course {
+  id            Int                @id @default(autoincrement())
+  name          String
+  courseDetails String?
+  // Relation fields
+  members       CourseEnrollment[]
+  tests         Test[]
+}
+
+model CourseEnrollment {
+  createdAt DateTime @default(now())
+  role      UserRole
+  // Relation Fields
+  userId    Int
+  courseId  Int
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+  @@index([userId, role])
+}
+
+model Test {
+  id          Int          @id @default(autoincrement())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  date        DateTime
+  // Relation Fields
+  courseId    Int
+  course      Course       @relation(fields: [courseId], references: [id])
+  testResults TestResult[]
+}
+
+model TestResult {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  result    Int // Percentage precise to one decimal point represented as `result * 10^-1`
+
+  // Relation Fields
+  studentId Int
+  student   User @relation(name: "results", fields: [studentId], references: [id])
+  graderId  Int
+  gradedBy  User @relation(name: "graded", fields: [graderId], references: [id])
+  testId    Int
+  test      Test @relation(fields: [testId], references: [id])
+}
+
+enum UserRole {
+  STUDENT
+  TEACHER
+}
+
+// model Token {
+//   id         Int       @id @default(autoincrement())
+//   createdAt  DateTime  @default(now())
+//   updatedAt  DateTime  @updatedAt
+//   type       TokenType
+//   emailToken String?   @unique // Only used for short lived email tokens
+//   valid      Boolean   @default(true)
+//   expiration DateTime
+
+//   // Relation fields
+//   user   User @relation(fields: [userId], references: [id])
+//   userId Int
+// }
+
+// enum TokenType {
+//   EMAIL // used as a short-lived token sent to the user's email
+//   API
+// }

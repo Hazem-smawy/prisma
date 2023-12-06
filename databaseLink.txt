@@ -1,0 +1,149 @@
+https://dbdiagram.io/d/656de46556d8064ca05902c1
+
+Table slide {
+  id int
+  imageUrl varchar
+  title varchar
+  details varchar
+}
+
+Table user {
+  id integer [primary key]
+  name varchar
+  number varchar
+  email varchar
+  passbordUrl varchar
+  imageUrl varchar
+  status integer
+  tokens varchar
+}
+
+Table country {
+  id integer [primary key]
+  name varchar
+}
+Table place {
+  id integer [primary key]
+  name varchar
+  imageUrl varchar
+  status integer
+  type integer
+  details varchar
+  country_id integer
+}
+ref: place.country_id > country.id
+
+Table transport {
+  id integer [primary key]
+  name varchar
+  place_id integer
+}
+ref: transport.place_id > place.id
+
+Table flag {
+  id integer
+  name varchar
+}
+Table curency {
+  id int 
+  name varchar
+  status int
+  symbol varchar
+}
+
+Table secialMedia {
+  id int
+  name varchar
+  url varchar
+  type int
+}
+
+Table company {
+  id int
+  name varchar
+  imageUrl varchar
+  details varchar
+  type int
+  country_id int
+}
+
+ref: company.country_id > country.id
+
+Table paidWay {
+  id int 
+  name varchar
+  details varchar
+  imageUrl varchar
+  color varchar
+}
+Table isPaided {
+  id int 
+  paidWay_id int
+  flight_id int 
+  imageUrl varchar
+}
+
+ref: isPaided.paidWay_id > paidWay.id
+ref: isPaided.flight_id > flight.id
+
+Table loved {
+  id int
+  user_id int
+  type int
+  loved_id int
+}
+ref: loved.user_id > user.id
+ref: loved.loved_id > flight.id
+ref: loved.loved_id > place.id
+
+
+Table flight {
+  id int
+
+  user_id int
+  fromPlace_id int
+  toPlace_id int
+  price int
+  company_id int
+  type int
+  numberOfSeets int
+  curency_id int
+  flag_id int
+  travilDate timestam
+  arrivalDate timestam
+  dateOfRound timestam
+  notes varchar
+  goOnly int
+
+}
+ref: flight.user_id > user.id
+ref: flight.fromPlace_id > place.id
+ref: flight.toPlace_id > place.id
+ref: flight.company_id > company.id
+ref: flight.curency_id > curency.id
+ref: flight.flag_id > flag.id
+
+
+
+
+Table flightNotFound {
+  id int
+  user_id int
+  flight_id int
+}
+ref: flightNotFound.user_id > user.id
+ref: flightNotFound.flight_id > flight.id
+
+Table bookingOrder {
+  id int
+  status int
+  flight_id int
+  user_id int
+  date timestam
+  paidWay_id int
+  isDone int
+}
+ref: bookingOrder.user_id > user.id
+ref: bookingOrder.flight_id > flight.id
+
+
