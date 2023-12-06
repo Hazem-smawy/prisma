@@ -33,6 +33,11 @@ app.use('/auth', require('./route/auth_route'))
 app.use('/users',verifyToken, require("./route/user_route.js"))
 
 
+app.get('/',(req,res)=> {
+    res.json({"message":"it is successfully connect"})
+})
+
+
 const port = process.env.PORT || 3333
 app.listen(port, () => {
     console.log(`it is running in port:${port} `)
